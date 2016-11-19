@@ -185,11 +185,26 @@ defmodule ExqUi.RouterPlug do
     index_path = Path.join([Application.app_dir(:exq_ui), "priv/static/index.html"])
     EEx.function_from_file :defp, :render_index, index_path, [:assigns]
 
-    match _ do
-      base = ""
-      if conn.assigns[:namespace] != "" do
-        base = "#{conn.assigns[:namespace]}/"
+    def is_authorized(nil, _), do: :unauthorized
+    def is_authorized(_, nil), do: :unauthorized
+    def is_authorized(user, password) do
+      if Application.get_env(:exq_ui, :auth_user) == user &&
+         Application.get_env(:exq_ui, :auth_password) == password do
+        :authorized
+      else
+        :unauthorized
       end
+    end
+
+    match _ do
+      PlugBasicAuth.call(conn, &Router.is_authorized/2)
+
+      base =
+        if conn.assigns[:namespace] != "" do
+          "#{conn.assigns[:namespace]}/"
+        else
+          ""
+        end
 
       conn
         |> put_resp_header("content-type", "text/html")

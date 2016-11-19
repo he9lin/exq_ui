@@ -10,11 +10,17 @@ defmodule Exq.ApiTest do
 
   setup_all do
     TestRedis.setup
-    {:ok, sup} = Exq.start_link([host: redis_host, port: redis_port, name: Exq, mode: :api])
+    sup =
+      case Exq.start_link([host: redis_host, port: redis_port, name: Exq, mode: :api]) do
+        {:error, {:already_started, pid}} -> pid
+        {:ok, supo} -> supo
+      end
+
     on_exit fn ->
       TestRedis.teardown
       stop_process(sup)
     end
+
     :ok
   end
 

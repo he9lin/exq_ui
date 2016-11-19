@@ -70,16 +70,16 @@ defmodule TestRedis do
 
   #TODO: Automate config
   def start do
-    unless Exq.Support.Config.get(:test_with_local_redis) == false do
-      [] = :os.cmd('redis-server test/test-redis.conf')
-      :timer.sleep(100)
-    end
+    # unless Exq.Support.Config.get(:test_with_local_redis) == false do
+    #   [] = :os.cmd('redis-server test/test-redis.conf')
+    #   :timer.sleep(100)
+    # end
   end
 
   def stop do
-    unless Exq.Support.Config.get(:test_with_local_redis) == false do
-      [] = :os.cmd('redis-cli -p 6555 shutdown')
-    end
+    # unless Exq.Support.Config.get(:test_with_local_redis) == false do
+    #   [] = :os.cmd('redis-cli -p 6555 shutdown')
+    # end
   end
 
   def setup do
