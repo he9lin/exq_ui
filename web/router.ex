@@ -189,14 +189,6 @@ defmodule ExqUi.RouterPlug do
     EEx.function_from_file :defp, :render_index, index_path, [:assigns]
 
     match _ do
-      Logger.info inspect(conn.path_info)
-      if Enum.member?(conn.path_info, "assets") do
-        Logger.info "Path info contains assets"
-      else
-        Logger.info inspect("check authorized")
-        PlugBasicAuth.call(conn, &Router.is_authorized/2)
-      end
-
       base = ""
       if conn.assigns[:namespace] != "" do
         base = "#{conn.assigns[:namespace]}/"
