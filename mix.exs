@@ -37,6 +37,7 @@ defmodule ExqUi.Mixfile do
       { :exq, "~> 0.8.1"},
       { :plug, ">= 0.8.1 and < 2.0.0"},
       { :cowboy, "~> 1.0" },
+      { :plug_basic_auth, "~> 1.1"},
       { :excoveralls, "~> 0.3", only: :test }
     ]
   end
