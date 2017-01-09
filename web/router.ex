@@ -14,6 +14,7 @@ defmodule ExqUi.RouterPlug do
   end
 
   def call(conn, opts) do
+    Logger.info inspect(opts)
     namespace_opt = opts[:namespace] || "exq"
     conn = Plug.Conn.assign(conn, :namespace, namespace_opt)
     conn = Plug.Conn.assign(conn, :exq_name, opts[:exq_opts][:name])
@@ -141,7 +142,7 @@ defmodule ExqUi.RouterPlug do
 
       process_jobs = for p <- processes do
         process = Map.delete(p, "job")
-        pjob = p.job
+        pjob = p.job |> Poison.decode!
         process = Map.put(process, :job_id, pjob["jid"])
         |> Map.put(:started_at, score_to_time(p.started_at))
         |> Map.put(:id, "#{process.host}:#{process.pid}")
