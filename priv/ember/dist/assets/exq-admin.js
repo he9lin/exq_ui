@@ -2247,7 +2247,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("exq-admin/app")["default"].create({"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true,"name":"exq-admin","version":"v0.8.2"});
+  require("exq-admin/app")["default"].create({"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true,"name":"exq-admin","version":"0.0.0+7916b53c"});
 }
 
 /* jshint ignore:end */
