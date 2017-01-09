@@ -14,7 +14,6 @@ defmodule ExqUi.RouterPlug do
   end
 
   def call(conn, opts) do
-    Logger.info inspect(opts)
     namespace_opt = opts[:namespace] || "exq"
     conn = Plug.Conn.assign(conn, :namespace, namespace_opt)
     conn = Plug.Conn.assign(conn, :exq_name, opts[:exq_opts][:name])
