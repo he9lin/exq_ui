@@ -151,8 +151,6 @@ define('exq-admin/controllers/index', ['exports'], function (exports) {
               failures = rtdata.filter(function (d) {
                 return d.id.startsWith("f") && _this.compareDates(dt, d.get('timestamp'));
               });
-              console.log(successes);
-              console.log(failures);
               s = successes.length;
               f = failures.length;
               success_set.push(s);
@@ -2256,7 +2254,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("exq-admin/app")["default"].create({"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true,"name":"exq-admin","version":"0.0.0+64a3e87e"});
+  require("exq-admin/app")["default"].create({"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true,"name":"exq-admin","version":"0.0.0+bcb4ed54"});
 }
 
 /* jshint ignore:end */
