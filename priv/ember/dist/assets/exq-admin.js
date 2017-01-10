@@ -115,9 +115,21 @@ define('exq-admin/controllers/index', ['exports'], function (exports) {
       pointDot: false,
       pointHitDetectionRadius: 2
     },
+    graph_dashboard_data: {
+      labels: [],
+      datasets: [{
+        data: []
+      }]
+    },
     dashboard_data: {},
-    graph_dashboard_data: (function () {
-      var d, dt, f, failure_set, failures, i, j, key, labels, len, mydates, rtdata, s, success_set, successes, t;
+    compareDates: function compareDates(a, b) {
+      var a1, b1;
+      a1 = moment(a).utc().format();
+      b1 = moment(b).utc().format();
+      return a1 === b1;
+    },
+    set_graph_dashboard_data: (function () {
+      var d, i, labels, mydates, t;
       if (this.get('date') !== null) {
         d = moment.utc(this.get('date'));
         labels = [];
@@ -126,56 +138,53 @@ define('exq-admin/controllers/index', ['exports'], function (exports) {
           labels.push("");
           mydates.push(moment.utc(d.valueOf() - t * 1000));
         }
-        rtdata = this.store.findAll('realtime');
-        success_set = [];
-        failure_set = [];
-        for (j = 0, len = mydates.length; j < len; j++) {
-          dt = mydates[j];
-          key = dt.format("YYYY-MM-DD HH:mm:ss ZZ");
-          successes = rtdata.filterBy("id", "s" + key);
-          failures = rtdata.filterBy("id", "f" + key);
-          s = 0;
-          if (successes.length > 0) {
-            s = successes[0].get('count');
-          }
-          f = 0;
-          if (failures.length > 0) {
-            f = failures[0].get('count');
-          }
-          success_set.push(s);
-          failure_set.push(f);
-        }
-        return {
-          labels: labels,
-          datasets: [{
-            label: "Failures",
-            fillColor: "rgba(255,255,255,0)",
-            strokeColor: "rgba(151,187,205,1)",
-            pointColor: "rgba(151,187,205,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(151,187,205,1)",
-            data: success_set.reverse()
-          }, {
-            label: "Sucesses",
-            fillColor: "rgba(255,255,255,0)",
-            strokeColor: "rgba(238,77,77,1)",
-            pointColor: "rgba(238,77,77,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(238,77,77,1)",
-            data: failure_set.reverse()
-          }]
-        };
-      } else {
-        return {
-          labels: [],
-          datasets: [{
-            data: []
-          }]
-        };
+        return this.store.findAll('realtime').then((function (_this) {
+          return function (rtdata) {
+            var _data, dt, f, failure_set, failures, j, len, s, success_set, successes;
+            success_set = [];
+            failure_set = [];
+            for (j = 0, len = mydates.length; j < len; j++) {
+              dt = mydates[j];
+              successes = rtdata.filter(function (d) {
+                return d.id.startsWith("s") && _this.compareDates(dt, d.get('timestamp'));
+              });
+              failures = rtdata.filter(function (d) {
+                return d.id.startsWith("f") && _this.compareDates(dt, d.get('timestamp'));
+              });
+              console.log(successes);
+              console.log(failures);
+              s = successes.length;
+              f = failures.length;
+              success_set.push(s);
+              failure_set.push(f);
+            }
+            _data = {
+              labels: labels,
+              datasets: [{
+                label: "Failures",
+                fillColor: "rgba(255,255,255,0)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: success_set.reverse()
+              }, {
+                label: "Sucesses",
+                fillColor: "rgba(255,255,255,0)",
+                strokeColor: "rgba(238,77,77,1)",
+                pointColor: "rgba(238,77,77,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(238,77,77,1)",
+                data: failure_set.reverse()
+              }]
+            };
+            return _this.set("graph_dashboard_data", _data);
+          };
+        })(this));
       }
-    }).property('dashboard_data', 'date')
+    }).observes('dashboard_data', 'date')
   });
 
   exports['default'] = IndexController;
@@ -2247,7 +2256,7 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("exq-admin/app")["default"].create({"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true,"name":"exq-admin","version":"0.0.0+7916b53c"});
+  require("exq-admin/app")["default"].create({"LOG_ACTIVE_GENERATION":true,"LOG_VIEW_LOOKUPS":true,"name":"exq-admin","version":"0.0.0+64a3e87e"});
 }
 
 /* jshint ignore:end */
